@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119048537-17"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119048537-17');
+    </script>
+    <meta name="viewport" , content="width=device-width, intial-scale=1">
+    <title>deepNEC-2.0</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    
+   
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header>
+        <div class="bd-navbar mx-5 mb-4 mt-3 mx-auto col-md-12">
+        <nav class="navbar navbar-expand navbar-light">
+            <div class="container d-flex flex-wrap">
+                <span class="h-brand navbar-brand">
+                    <b>deepNEC-2.0</b>
+                </span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+                   
+                    <ul class="navbar-nav ">
+                        <li class="nav-item"><a
+                                class="nav-link " href="index.html"><i
+                                    class="bi bi-info-square-fill mx-2"></i><span>About</span></a></li>
+                        <li class="nav-item"><a
+                                class="nav-link active"
+                                href="prediction.html"><i
+                                    class="bi bi-terminal-fill mx-2"></i><span>Prediction</span></a></li>
+                        <li class="nav-item"><a
+                                class="nav-link " href="help.html"><i
+                                    class="bi bi-question-square-fill mx-2"></i><span>Help</span></a></li>
+                        <li class="nav-item"><a
+                                class="nav-link"
+                                href="download.html"><i
+                                    class="bi bi-cloud-arrow-down-fill mx-2"></i><span>Download</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        </div>
+    </header>
+    <main  class="flex-shrink-0 ">
+   
+        <div id = "mainc" class="px-0 pt-4 t-3 mcontainer container">
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="mb-1 row">
+                    <div class="col-sm-6">
+                        <div class="col-title">
+                            Input Options
+                        </div>
+                        <div class="px-5">
+                            <div class="line mt-2 mb-4">
+    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-title">
+                            Prediction Options
+                        </div>
+                        <div class="px-5">
+                            <div class="line mt-2 mb-4">
+    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="text-left px-4 col-sm-6">
+                        <div class="row">
+                            <!-- <div class="col-sm-12"> -->
+
+                                <div class="col-sm-4">
+                                    <h6 class="mb-2 mt-2 text-head">
+                                        Sequence Type:
+                                    </h6>
+                                </div>
+                                <div class="col-sm-8">
+                                    
+                                        <div class ="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-check form-check-inline mt-2 ">
+                                                    <input class="form-check-input" id="seqtype" value="prot" name="seqType" checked="" type="radio"><label
+                                                        for="prot" class="form-check-label px-2 ">Protein</label>
+                                                </div>
+                                                <div class="form-check form-check-inline mt-2">
+                                                    <input class="form-check-input" id="seqtype" value="nucl" name="seqType" type="radio"><label
+                                                        for="nucl" class="form-check-label px-2 ">Nucleotide</label>
+                                                </div>
+                                            </div>
+                             
+                                        </div>
+                                            
+                                       
+                                </div>
+                            <div class="col-sm-3">
+                                <h6 class="mb-2 mt-2 text-head">
+                                    Accession ID:
+                                </h6>
+                            </div>
+                            <div class="col-sm-9">
+                                
+                                    <div class ="row">
+                                        <div class="col-sm-7">
+                                            <div class="form-check form-check-inline mt-2 ">
+                                                <input class="form-check-input" id="ncbiAccc" value="ncbi" name="accType" checked="" type="radio"><label
+                                                    for="ncbiAccc" class="form-check-label px-2 ">NCBI</label>
+                                            </div>
+                                            <div class="form-check form-check-inline mt-2">
+                                                <input class="form-check-input" id="uniprotAcc" value="uniprot" name="accType" type="radio"><label
+                                                    for="uniprotAcc" class="form-check-label px-2 ">Uniprot</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <input class="form-control deepnec-form" placeholder="MBA0760395" name= "accesion" type="text"
+                                                id="ncbiAcc">
+                                        </div>
+                                    </div>
+                                        
+                                   
+                            </div>
+                         
+                            <div class="col-sm-12 my-4 col-title2">
+                                OR
+                            </div>
+                            <div class="col-sm-4 text-head mt-1">
+                                Upload a FASTA file:
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group mb-2">
+                                    <input class="deepnec-from  form-control" placeholder="Maximum 10000 sequences">
+                                    <input type="file" class="form-control-file real-input" name="fileSeq" id="fileSeq" />
+                                    <label class="btn deepnec-btn-1" for="fileSeq">Upload
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 my-4 col-title2">
+                                OR
+                            </div>
+                            <div class="col-sm-6 text-head mt-2">
+                                Paste FASTA sequence:
+                            </div>
+                            <div class="col-sm-6 mb-1">
+                                <button type="button" id="loadDemoData" class="deepnec-btn-1 btn btn-primary">Load demo
+                                    FASTA</button>
+                            </div>
+                            <div class="col-sm-12 mt-3">
+                                <textarea class="deepnec-form form-control " id="textareaSeq" name="textareaSeq"
+                                    placeholder="Maximum 10000 sequences. Please remove version number from the FASTA headers" rows="6"></textarea></p>
+                            </div>
+                        </div>
+                        <div class="px-5">
+                            <div class="line mt-2 mb-3">
+    
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-4 form-group">
+                            <label class="text-head">Email address (Optional)</label>
+                            <input name="emailAddress" placeholder="Enter email" class="deepnec-form form-control mt-3"
+                                id="emailAddress" type="email">
+                        </div>
+                    </div>
+                    <div class="col-sm-6 px-4">
+                        <div class="col-sm-12">
+                            <h6 class="text-head mb-2">
+                                <p class="text-muted2 ms-3">Select a Phase to run <i class="ms-2 bi bi-info-circle"
+                                        data-bs-toggle="modal" data-bs-target="#predictionModal"></i></p>
+                            </h6>
+                            <div class="form-check mx-4">
+                                <input class="form-check-input mb-2 mx-2" id="phase1radio" value="Phase1" type="checkbox"
+                                    name="phase1radio">
+                                <label class="form-check-label" for="phase1radio">
+                                    Phase 1 - &nbsp;Enzyme vs Non-enzyme
+                                </label>
+                            </div>
+                            <div class="form-check mx-4">
+                                <input class="form-check-input mb-2 mx-2" id="phase2radio" value="Phase2" name="phase2radio"
+                                    type="checkbox">
+                                <label class="form-check-label" for="phase2radio">
+                                    Phase 2 - Nitrogen vs Non-nitrogen
+                                </label>
+                            </div>
+                            <div class="form-check mx-4">
+                                <input class="form-check-input mb-2 mx-2 " id="phase3radio" value="Phase3"
+                                    name="phase3radio" type="checkbox">
+                                <label class="form-check-label" for="phase3radio">
+                                    Phase 3 - Nitrogen Classification
+                                </label>
+                            </div>
+                            <div class="form-check mx-4">
+                                <input class="form-check-input mb-2 mx-2" id="phase4radio" value="Phase4" name="phase4radio"
+                                    type="checkbox">
+                                <label class="form-check-label" for="phase4radio">
+                                    Phase 4 - EC Number Classification
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <h6 class="text-head mb-2">
+                                <p class="text-muted2 ms-3">Select a class for EC number prediction in Phase 4 <i
+                                        class="ms-2 bi bi-info-circle" data-toggle="modal"
+                                        data-target="#predictionModal"></i></p>
+                            </h6>
+                        </div>
+                        <div class="col-sm-10 px-4">
+                           
+                            <select name='terms' id='terms' class='form-select py-2' >
+                                <option value="nitri">Nitrification</option>
+                                <option value="nfix">Nitrogen Fixation</option>
+                                <option value="assim">Assimilatory</option>
+                                <option value="dissim">Dissimilatory</optionform->
+                                <option value="denitri">Denitrification</option>
+                                <option value="addn">Assimilatory+Dissimilatory+Denitrification+Nitrification</option>
+                                <option value="ddn">Dissimilatory+Denitrification+Nitrification</option>
+                                <option value="dn">Denitrification+Nitrification</option>
+                                <option value="dd">Dissimilatory+Denitrification</option>
+                                <!-- <option value="all">Select All</option> -->
+    
+                            </select>
+                        </div>
+                        <div class="px-5">
+                            <div class="line mt-4 mb-4">
+    
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-2">
+                            <h6 class="text-head mb-2">
+                                <p class="text-muted2 ms-3">Select a Prediction Method <i class="ms-2 bi bi-info-circle"
+                                        data-bs-toggle="modal" data-bs-target="#strategyModal"></i></p>
+                            </h6>
+                                <div class="col-sm-12 ms-5">
+                                    <div class="form-check form-check-inline ">
+                                        <input class="form-check-input" id="DNNradio" value="DNN" name="predMethod" checked="" type="radio"><label
+                                            for="DNNradio" class="form-check-label px-2 ">DNN</label>
+                                    </div>
+                                    <div class="form-check form-check-inline ">
+                                        <input class="form-check-input" id="HomologRadio" value="homology" name="predMethod" type="radio"><label
+                                            for="HomologRadio" class="form-check-label px-2 ">Homology</label>
+                                    </div>
+    
+                                    <div class="form-check form-check-inline ">
+                                        <input class="form-check-input" id="HybridRadio" value="combined" name="predMethod" type="radio"><label
+                                            for="HybridRadio" class="form-check-label px-2 ">DNN + Homology</label>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <section class="d-none" id="bprogram">
+                        <div class="px-5">
+                            <div class="line mt-3 mb-3">
+    
+                            </div>
+                        </div>
+    
+                        <div class="col-sm-12 mt-2 " >
+                            <h6 class="text-head mb-2">
+                                <p class="text-muted2 ms-3">Select a BLAST Program <i class="ms-2 bi bi-info-circle"
+                                        data-toggle="modal" data-target="#predictionModal"></i></p>
+                            </h6>
+                                <div class="col-sm-12 ms-5">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"  id="blastRadio" value="blast" name="inlineRadioOptions1" checked=""
+                                            type="radio"><label for="blastRadio" class="form-check-label px-2 mt-1">BLAST</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"  id="diamondRadio" value="diamond" name="inlineRadioOptions1" type="radio"><label
+                                            for="diamondRadio" class=" form-check-label px-2 mt-1">Diamond BLAST</label>
+                                    </div>
+                            </div>
+                        </div>
+                       
+                        <div class="px-5">
+                            <div class="line mt-3 mb-4">
+    
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <h6 class="text-head mb-2">
+                                <p class="text-muted2 ms-3">Select BLAST Parameters <i class="ms-2 bi bi-info-circle"
+                                        data-toggle="modal" data-target="#predictionModal"></i></p>
+                            </h6>
+                        <section class="row">
+                            <div class="col-sm-4">
+                                <label class="text-head mb-1">E-value</label>
+                                <input class="form-control deepnec-form" placeholder="1e-10" type="text"
+                                    id="evalue">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="text-head mb-1">Identity (%)</label>
+                                <input class="form-control deepnec-form" placeholder="30" type="text"
+                                    id="tfIdentity">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="text-head mb-1">Coverage (%)</label>
+                                <input class="form-control deepnec-form" placeholder="60" type="text"
+                                    id="tfCov">
+                            </div>
+                        </section>
+                        </div>
+                    </section>
+                    </div>
+    
+                </div>
+    
+                <div class="row mt-4 mb-3 mx-auto justify-content-center ">
+    
+                    <div class="col-sm-2 mt-4">
+                        <button type="button" id="resetPrediction" class="deepnec-btn-2 btn btn-primary">Reset
+                            All</button>
+                    </div>
+    
+                    <div class="col-sm-2 mt-4">
+                        <!-- <button type="button" id="runPrediction" class="deepnec-btn-1 btn btn-primary">Run
+                            Prediction</button> -->
+                            <button id= "runPrediction" type="button" class="deepnec-btn-1 btn btn-primary"> Run Prediction</button>
+                    </div>
+    
+                </div>
+       
+    
+            </form>
+        </div>
+ 
+            
+        
+    
+    
+    
+
+    </main>
+    <div class="modal fade" id="predictionModal" tabindex="-1" role="dialog" aria-labelledby="predictionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="predictionModalLabel">About Prediction Phases</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">  
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Phase 1 - This is first phase where a query sequence is being predicted as enzyme or non-enzyme</p>
+                <hr>
+                <p>Phase 2 - This phase will run phase1 first followed by phase2 where a query sequence is first predicted as enzyme or non-enzyme followed by prediction of enzyme as Nitrogen biochemical network-related  or Non-nitrogen biochemical network-related .</p>
+                <hr>
+                <p>Phase 3 - This phase classify Nitrogen biochemical network-related enzymes predicted in Phase 2 in 9 classes</p>
+                <hr>
+                <p>Phase 4 - This phase further predict the EC number for a selected Nitrogen biochemical network-related enzymes class predicted in phase 3</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="strategyModal" tabindex="-1" role="dialog" aria-labelledby="strategyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold" id="strategyModalLabel">About Prediction Strategy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><b>DNN:</b> Deep Neural Network based prediction. Which uses trained models for prediction.  </p>
+                    <hr>
+                    <p><b>Homology:</b>  Similarity based prediction. Uses blast /diamond(fast) for finding similarity. </p>
+                    <hr>
+                    <p><b>
+                        DNN + Homology: 
+                    </b>This approach combines results of Deep Neural Network based prediction and Similarity based prediction.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    
+    <div class="modal fade" id="errorModal" tabindex="-2" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="mod-header modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error in Job Submission</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">  
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <p id="deepNECerror">Error.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="intermediate" class="container mt-5 d-none" >
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h4 class="my-2">You have successfully submitted a query to the nitrogen metabolism enzyme prediction service at deepNEC.</h4>
+                <h4 class="my-2">Please be patient, your query is being processed <img src="assets/images/test.gif" height="20"></h4>
+                
+                <h4 class="my-2">Your results will be available at the below link. After successfull completion of the job, this page will be redirected 
+                    to the results page.</h4>
+                <h5 class ="text-center" id="deepNECSubmittionScreen">You have successfully submitted a query to the deepnec-2.0. </h5>
+                <h5 class="text-center removetext">Bookmark the above link if you want to access your results later. <b >Files will be removed one month after the end of the job.</b></h5>
+            </div>
+            
+        </div>
+        <div class='row mt-5 justify-content-center'>
+            <div class="col-md-2">
+                <a href="prediction.html" target="_blank" class="deepnec-btn-1 btn btn-primary" role="button">Submit another job</a> 
+            </div>
+           
+        </div>
+        <!-- <div class='row mt-5 justify-content-center'>
+            <div class="col-md-10">
+            <p class='lead' style="font-size: 15px">
+            <b>If you are using deepNEC-2.0, please cite:</b> Naveen Duhan, Jeanette M Norton, Rakesh Kaundal<sup>*</sup> (2022). deepNEC: a novel alignment-free tool for the identification and classification of nitrogen biochemical network-related enzymes using deep learning, <i>Briefings in Bioinformatics</i>, Volume 23, Issue 3, May 2022, bbac071, <a href='https://doi.org/10.1093/bib/bbac071' target="_blank">https://doi.org/10.1093/bib/bbac071</a>
+            </p>
+        </div>
+    </div> -->
+    <footer class="footer mx-5 mt-5 py-2 mx-auto">
+        <div class="px-5">
+            <div class="line mt-2 mb-1">
+
+            </div>
+        </div>
+        <div class="container d-flex flex-wrap py-1">
+            <p class="col-md-4 mb-0 text-muted" style="font-size: large;">&copy; 2023 </p>
+            <a href="https://bioinfo.usu.edu" target="_blank"
+                class="d-flex align-items-center  mb-lg-0 me-lg-auto text-dark text-decoration-none">
+                <img src="./assets/images/lab_logo_red.png" style="height: 50px">
+            </a>
+            <a href="https://usu.edu" target="_blank"
+                class="d-flex align-items-center  mx-2 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+                <img src="./assets/images/usulogo2.png" style="height: 50px;">
+            </a>
+            <a href="https://psc.usu.edu" target="_blank"
+                class="d-flex align-items-center  mx-2 mb-lg-0 me-lg-auto text-dark text-decoration-none">
+                <img src="./assets/images/PSC_NoTower_Blue.png" style="height: 50px;">
+            </a>
+        </div>
+    </footer>
+
+
+    <script src="./assets/js/prediction.js"></script>
+
+</body>
+
+</html>
