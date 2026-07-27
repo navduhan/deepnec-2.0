@@ -19,7 +19,16 @@ class TFLiteModelWrapper:
     """
     def __init__(self, model_path):
         import tensorflow as tf
-        self.interpreter = tf.lite.Interpreter(model_path=model_path)
+        # The default XNNPACK delegate segfaults on some Linux CPU/runtime
+        # combinations. Use TensorFlow Lite's built-in CPU kernels for stable,
+        # deterministic server inference.
+        self.interpreter = tf.lite.Interpreter(
+            model_path=model_path,
+            num_threads=1,
+            experimental_op_resolver_type=(
+                tf.lite.experimental.OpResolverType.BUILTIN_WITHOUT_DEFAULT_DELEGATES
+            ),
+        )
         self.interpreter.allocate_tensors()
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
