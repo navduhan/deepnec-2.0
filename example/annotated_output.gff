@@ -1,0 +1,5 @@
+##gff-version 3
+chr1	Prokka	gene	100	1500	.	+	.	ID=gene1;Name=ACL58880.1_EC_1.18.6.1;locus_tag=LT001;product=nitrogen cycle nitrogen_fixation enzyme (predicted protein) [EC:1.18.6.1];db_xref=EC:1.18.6.1;deepnec_pathway=Nitrogen_Fixation;deepnec_confidence=100.0%
+chr1	Prokka	CDS	100	1500	.	+	0	ID=cds-ACL58880.1_EC_1.18.6.1;Parent=gene1;product=nitrogen cycle nitrogen_fixation enzyme (hypothetical protein) [EC:1.18.6.1];db_xref=EC:1.18.6.1;deepnec_pathway=Nitrogen_Fixation;deepnec_confidence=100.0%
+chr1	Prokka	gene	2000	3500	.	-	.	ID=gene2;Name=AWI64126.1_EC_1.14.99.39;locus_tag=LT002;product=nitrogen cycle ddn enzyme (predicted protein) [EC:1.7.2.1];db_xref=EC:1.7.2.1;deepnec_pathway=DDN;deepnec_confidence=100.0%
+chr1	Prokka	CDS	2000	3500	.	-	0	ID=cds-AWI64126.1_EC_1.14.99.39;Parent=gene2;product=nitrogen cycle ddn enzyme (some oxidase) [EC:1.7.2.1];db_xref=EC:1.7.2.1;deepnec_pathway=DDN;deepnec_confidence=100.0%

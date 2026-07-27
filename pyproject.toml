@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deepnec"
+version = "2.0.0"
+description = "Deep Learning-Based Nitrogen Metabolism Enzyme Classifier and EC Predictor"
+readme = "README.md"
+license = { text = "GPL-3.0-only" }
+authors = [
+    { name = "Naveen Duhan", email = "naveen.duhan@usu.edu" }
+]
+requires-python = ">=3.9"
+keywords = ["bioinformatics", "enzymes", "nitrogen-metabolism", "deep-learning", "esm2", "tflite"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "numpy>=1.22.0",
+    "pandas>=1.4.0",
+    "biopython>=1.79",
+    "scikit-learn>=1.0.0",
+    "tensorflow>=2.10.0",
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "peft>=0.12.0",
+    "openpyxl>=3.0.0",
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0"
+]
+
+[project.urls]
+Homepage = "https://kaabil.net/deepnec-2.0/"
+Repository = "https://github.com/navduhan/deepnec-2.0"
+Issues = "https://github.com/navduhan/deepnec-2.0/issues"
+
+[project.scripts]
+deepnec = "deepNEC.__main__:main"
+deepnec2 = "deepNEC.__main__:main"
+"deepnec2.0" = "deepNEC.__main__:main"
+deepnec-annotate = "deepNEC.annotate:main"
+deepnec-motif-scan = "deepNEC.motif_scan:main"
+deepnec-visualize = "deepNEC.visualize:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["deepNEC"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/deepNEC",
+    "/README.md",
+    "/LICENSE"
+]

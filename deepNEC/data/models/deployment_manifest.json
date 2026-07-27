@@ -1,0 +1,142 @@
+{
+  "version": "2.0.0",
+  "created_at": "2026-07-26",
+  "total_ec_outputs": 24,
+  "learned_ec_outputs": 20,
+  "direct_ec_outputs": 4,
+  "artifacts": {
+    "phase1/phase1_ultimate_hybrid.tflite": {
+      "description": "Phase 1 Binary Enzyme Filter",
+      "selected_fold": 5,
+      "selection_validation_mcc": 0.8929,
+      "independent_test_mcc": 0.8718,
+      "independent_test_accuracy": 0.9362,
+      "class_order": [
+        "Enzyme",
+        "Non-enzyme"
+      ],
+      "sha256": "ade765383fdd6c1c495d8f00ac7bc4678465acb5e0f2eb295c31975120c601cd",
+      "size_bytes": 18457604
+    },
+    "phase2/phase2_esm2.tflite": {
+      "description": "Phase 2 Nitrogen Filter",
+      "selected_fold": 1,
+      "selection_validation_mcc": 0.9864,
+      "independent_test_mcc": 0.9738,
+      "independent_test_accuracy": 0.9938,
+      "class_order": [
+        "Nitrogen",
+        "Non-nitrogen"
+      ],
+      "sha256": "36b57e513780f49135353720b93c556d9a8dd92be7bc00e9f5f0f9d1c89a2677",
+      "size_bytes": 2889284
+    },
+    "phase3/phase3_esm2.tflite": {
+      "description": "Phase 3 Sub-pathway Predictor",
+      "selected_fold": 4,
+      "selection_validation_mcc": 0.9512,
+      "independent_test_mcc": 0.9478,
+      "independent_test_accuracy": 0.9562,
+      "class_order": [
+        "ADDN",
+        "Anammox",
+        "Assimilatory",
+        "DN",
+        "Denitrification",
+        "DD",
+        "DDN",
+        "Dissimilatory",
+        "Nitrogen_Fixation",
+        "Nitrification"
+      ],
+      "sha256": "8d46d39920f27ddefcac51f25cf5caadbc761fe8e1496bd4243659e32080bc45",
+      "size_bytes": 2893428
+    },
+    "phase4/addn_esm2.tflite": {
+      "description": "Phase 4 ADDN Pathway EC Predictor",
+      "selected_fold": 1,
+      "selection_validation_mcc": 0.9981,
+      "independent_test_mcc": 1.0,
+      "independent_test_accuracy": 1.0,
+      "class_order": [
+        "1.7.99.-",
+        "1.7.99.4"
+      ],
+      "sha256": "7e4783306694a05c1a569238d16136a08b43bb569c64cdd2ec418bb517650b8f",
+      "size_bytes": 2889284
+    },
+    "phase4/anammox_esm2.tflite": {
+      "description": "Phase 4 Anammox Pathway EC Predictor",
+      "selected_fold": 1,
+      "selection_validation_mcc": 0.9642,
+      "independent_test_mcc": 0.9142,
+      "independent_test_accuracy": 0.959,
+      "class_order": [
+        "1.7.2.7",
+        "1.7.2.8"
+      ],
+      "sha256": "1b8f4bb7231c1be6410d229f94a970152648d12b26525df74622d5789804872e",
+      "size_bytes": 2889284
+    },
+    "phase4/assimilatory_esm2.tflite": {
+      "description": "Phase 4 Assimilatory Pathway EC Predictor",
+      "selected_fold": 3,
+      "selection_validation_mcc": 0.9167,
+      "independent_test_mcc": 0.9194,
+      "independent_test_accuracy": 0.9325,
+      "class_order": [
+        "1.4.1.13-14",
+        "1.4.1.2",
+        "1.4.1.3",
+        "1.4.1.4",
+        "1.4.7.1",
+        "1.7.1.1-3",
+        "1.7.1.4",
+        "1.7.7.1",
+        "1.7.7.2",
+        "6.3.1.2"
+      ],
+      "sha256": "0aef9fc758a89e64a663819a2fd3dab5adaf63c073f4d457e8cf32d6b085cd96",
+      "size_bytes": 2893424
+    },
+    "phase4/denitrification_esm2.tflite": {
+      "description": "Phase 4 Denitrification Pathway EC Predictor",
+      "selected_fold": 1,
+      "selection_validation_mcc": 1.0,
+      "independent_test_mcc": 1.0,
+      "independent_test_accuracy": 1.0,
+      "class_order": [
+        "1.7.2.4",
+        "1.7.2.5"
+      ],
+      "sha256": "6bd2251fc780f3d378218049f59b7aa266910a682dc4ba0d5c05d5ebebdd5269",
+      "size_bytes": 2889284
+    },
+    "phase4/dissimilatory_esm2.tflite": {
+      "description": "Phase 4 Dissimilatory Pathway EC Predictor",
+      "selected_fold": 1,
+      "selection_validation_mcc": 1.0,
+      "independent_test_mcc": 1.0,
+      "independent_test_accuracy": 1.0,
+      "class_order": [
+        "1.7.1.15",
+        "1.7.2.2"
+      ],
+      "sha256": "063b80893a7521f68b716df525a444274cdac91b74fafa12c07262be6d77b215",
+      "size_bytes": 2889284
+    },
+    "phase4/nitrification_esm2.tflite": {
+      "description": "Phase 4 Nitrification Pathway EC Predictor",
+      "selected_fold": 2,
+      "selection_validation_mcc": 1.0,
+      "independent_test_mcc": 0.9931,
+      "independent_test_accuracy": 0.9977,
+      "class_order": [
+        "1.14.99.39",
+        "1.7.2.6"
+      ],
+      "sha256": "1d96c3588642c61e7c2fe2d6f8dfc1d4d336678d898c058fef2e03bf934938d6",
+      "size_bytes": 2889296
+    }
+  }
+}

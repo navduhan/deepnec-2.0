@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use DeepNEC 2.0, please cite the software and associated manuscript."
+title: "DeepNEC 2.0"
+type: software
+version: 2.0.0
+date-released: 2026-07-26
+authors:
+  - family-names: Duhan
+    given-names: Naveen
+    email: naveen.duhan@usu.edu
+  - family-names: Norton
+    given-names: Jeanette M.
+  - family-names: Kaundal
+    given-names: Rakesh
+repository-code: "https://github.com/navduhan/deepnec-2.0"
+url: "https://kaabil.net/deepnec-2.0/"
+license: GPL-3.0-only

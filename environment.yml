@@ -1,0 +1,19 @@
+# Author: Naveen Duhan
+name: deepnec2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python>=3.8,<3.13
+  - diamond>=2.0.0
+  - blast
+  - transdecoder
+  - pip
+  - pip:
+    - numpy
+    - pandas
+    - biopython
+    - tensorflow>=2.10.0
+    - torch
+    - transformers
