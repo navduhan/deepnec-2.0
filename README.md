@@ -2,6 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org/)
 [![Packaging](https://img.shields.io/badge/packaging-PEP%20621%20%7C%20uv-green.svg)](https://github.com/astral-sh/uv)
+[![Documentation Status](https://readthedocs.org/projects/deepnec-20/badge/?version=latest)](https://deepnec-20.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](LICENSE)
 
 **DeepNEC 2.0** is an alignment-free, deep learning-based hierarchical framework for high-precision **Nitrogen Metabolism Enzyme Classification** and **EC Number Prediction** across 28 specific enzyme classes.
