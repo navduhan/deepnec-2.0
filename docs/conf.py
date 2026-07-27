@@ -27,6 +27,21 @@ extensions = [
     'myst_parser',
 ]
 
+# API documentation does not execute inference. Mock the runtime-only scientific
+# stack so Read the Docs does not download multi-gigabyte ML dependencies.
+autodoc_mock_imports = [
+    'Bio',
+    'matplotlib',
+    'numpy',
+    'pandas',
+    'peft',
+    'seaborn',
+    'sklearn',
+    'tensorflow',
+    'torch',
+    'transformers',
+]
+
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 source_suffix = {
