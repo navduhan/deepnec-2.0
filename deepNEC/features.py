@@ -4,10 +4,11 @@
 """
 Protein Sequence Feature Extraction Library
 ===========================================
-Author : Naveen Duhan
-Purpose: Provides the FEATURE class, which encodes protein amino acid
-         sequences as fixed-length numerical vectors suitable for training
-         deep learning / machine learning classifiers.
+Author: Naveen Duhan
+
+This module provides the ``FEATURE`` class, which encodes protein amino acid
+sequences as fixed-length numerical vectors suitable for training deep learning
+and machine learning classifiers.
 
 Dependency: feature_data.py  (amino acid property constants)
 

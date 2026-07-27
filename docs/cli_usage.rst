@@ -103,7 +103,7 @@ Example Commands
 ----------------
 
 1. Full Hierarchical Pipeline (Phases 1 -> 2 -> 3 -> 4)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Run all 4 phases on query protein sequences in ``query.fasta``:
 

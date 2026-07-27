@@ -44,7 +44,6 @@ html_theme_options = {
     'sticky_navigation': True,
     'includehidden': True,
     'titles_only': False,
-    'display_version': True,
     'style_nav_header_background': '#0f2439',
 }
 
