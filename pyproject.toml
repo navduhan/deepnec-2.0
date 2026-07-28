@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "deepnec"
-version = "2.0.1"
+version = "2.0.2"
 description = "Deep Learning-Based Nitrogen Metabolism Enzyme Classifier and EC Predictor"
 readme = "README.md"
 license = { text = "GPL-3.0-only" }
@@ -25,11 +25,11 @@ classifiers = [
 ]
 
 dependencies = [
-    "numpy>=1.22.0",
+    "numpy>=1.23.5,<2.0",
     "pandas>=1.4.0",
     "biopython>=1.79",
     "scikit-learn>=1.0.0",
-    "tensorflow>=2.10.0",
+    "tensorflow==2.16.2",
     "torch>=2.0.0",
     "transformers>=4.30.0",
     "peft>=0.12.0",

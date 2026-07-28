@@ -56,7 +56,7 @@ Verify your installation by running the version check command:
 .. code-block:: bash
 
    deepnec --version
-   # Output: DeepNEC 2.0.1
+   # Output: DeepNEC 2.0.2
 
 You can also run deepNEC using its versioned alias commands:
 

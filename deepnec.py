@@ -4,7 +4,7 @@
 Title: deepNEC 2.0 Command-line Entry Point
 Author: Naveen Duhan
 Lab: KAABiL (Kaundal Artificial Intelligence & Advanced Bioinformatics Lab)
-Version: 2.0.1
+Version: 2.0.2
 """
 from deepNEC.__main__ import main
 

@@ -3,7 +3,7 @@
 Title: DeepNEC 2.0 Main Execution Script
 Author: Naveen Duhan
 Lab: KAABiL (Kaundal Artificial Intelligence & Advanced Bioinformatics Lab)
-Version: 2.0.1
+Version: 2.0.2
 """
 
 import os

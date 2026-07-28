@@ -11,9 +11,9 @@ dependencies:
   - transdecoder
   - pip
   - pip:
-    - numpy
+    - numpy>=1.23.5,<2.0
     - pandas
     - biopython
-    - tensorflow>=2.10.0
+    - tensorflow==2.16.2
     - torch
     - transformers
