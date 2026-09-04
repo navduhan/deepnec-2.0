@@ -1,6 +1,6 @@
 {
-  "version": "2.0.3",
-  "release": "Round 2 corrected final all-training models",
+  "version": "2.0.4",
+  "release": "Round 2 corrected final models with Phase 2-augmented Phase 1",
   "embedding_model": "facebook/esm2_t33_650M_UR50D",
   "embedding_dimension": 1280,
   "long_sequence_policy": {
@@ -15,10 +15,16 @@
   },
   "artifacts": {
     "phase1/phase1_esm2.tflite": {
-      "description": "Phase 1 final frozen ESM-2 enzyme filter",
+      "description": "Phase 1 final cluster_rep ESM-2 enzyme filter trained for 92 epochs",
       "class_order": ["enzyme", "non_enzyme"],
-      "sha256": "601b886dca212dd11415e1c6782de61aa5124249206708e3c528e231e6b2dfa9",
-      "size_bytes": 2889364
+      "sha256": "67950b30cf6aed21b9004b9d11b337c2feb74230659d6006c138a2f861c3df83",
+      "size_bytes": 2889260,
+      "training_variant": "cluster_rep",
+      "epochs": 92,
+      "training_records": 47737,
+      "enzyme_records": 27046,
+      "non_enzyme_records": 20691,
+      "seed": 4362
     },
     "phase2/phase2_esm2.tflite": {
       "description": "Phase 2 final all-training nitrogen filter",

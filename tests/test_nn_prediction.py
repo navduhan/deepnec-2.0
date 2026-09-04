@@ -17,7 +17,7 @@ class TFLiteInferenceTests(unittest.TestCase):
     def test_deployment_manifest_matches_model_files(self):
         model_root = Path(__file__).parents[1] / "deepNEC" / "data" / "models"
         manifest = json.loads((model_root / "deployment_manifest.json").read_text())
-        self.assertEqual(manifest["version"], "2.0.3")
+        self.assertEqual(manifest["version"], "2.0.4")
         for relative, metadata in manifest["artifacts"].items():
             with self.subTest(artifact=relative):
                 artifact = model_root / relative
