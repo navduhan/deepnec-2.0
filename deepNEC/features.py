@@ -889,14 +889,43 @@ def extract_phase1_descriptors(sequence):
     return np.array(f1 + f2, dtype=np.float32)
 
 
-def extract_esm2_embeddings(sequences, use_lora=False, device=None):
+def _esm_windows(sequence, policy, window_size=1022, overlap=128):
+    """Return training-compatible ESM-2 residue windows for one sequence."""
+    if policy not in {"windowed", "truncate"}:
+        raise ValueError("long_sequence_policy must be 'windowed' or 'truncate'")
+    if len(sequence) <= window_size:
+        return [sequence]
+    if policy == "truncate":
+        return [sequence[:window_size]]
+
+    stride = window_size - overlap
+    windows = [
+        sequence[start : start + window_size]
+        for start in range(0, len(sequence) - window_size + 1, stride)
+    ]
+    if (len(sequence) - window_size) % stride:
+        windows.append(sequence[-window_size:])
+    return windows
+
+
+def extract_esm2_embeddings(
+    sequences,
+    use_lora=False,
+    device=None,
+    long_sequence_policy="windowed",
+    batch_size=4,
+):
     """
     Extract 1280-dimensional mean-pooled ESM-2 embeddings for a list of sequences.
-    If use_lora=True, loads the Fold 5 LoRA adapter model from data/models/phase1/adapter.
-    For sequences > 1,022 residues, uses overlapping 1,022-residue windows (128 overlap)
-    and averages the mean-pooled embeddings across all evaluation windows.
+    Phase 1 uses ``long_sequence_policy='windowed'``. The final Phase 2--4
+    models use ``long_sequence_policy='truncate'`` to reproduce their training
+    embeddings exactly. ``use_lora`` is retained only to give old callers a
+    clear incompatibility error; the corrected release has no LoRA model.
     Terminates with a clear RuntimeError if ESM-2 extraction fails.
     """
+    sequences = list(sequences)
+    if not sequences:
+        return np.empty((0, 1280), dtype=np.float32)
     try:
         import torch
         from transformers import AutoTokenizer, EsmModel, logging as tf_logging
@@ -910,54 +939,59 @@ def extract_esm2_embeddings(sequences, use_lora=False, device=None):
         base_model = EsmModel.from_pretrained(model_name)
 
         if use_lora:
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            adapter_path = os.path.join(base_dir, "data", "models", "phase1", "adapter")
-            if not os.path.exists(adapter_path):
-                raise RuntimeError(f"Phase 1 Fold 5 LoRA adapter path missing: '{adapter_path}'. Cannot compute Phase 1 embeddings without Fold 5 LoRA adapter.")
-            try:
-                from peft import PeftModel
-                model = PeftModel.from_pretrained(base_model, adapter_path).to(device)
-            except Exception as peft_err:
-                raise RuntimeError(f"Failed to load Phase 1 Fold 5 LoRA adapter from '{adapter_path}': {peft_err}")
-        else:
-            model = base_model.to(device)
+            raise ValueError(
+                "LoRA inference was retired in DeepNEC 2.0.3; use the final frozen "
+                "ESM-2 model without an adapter."
+            )
+        model = base_model.to(device)
 
         model.eval()
 
-        embeddings = []
-        for seq in sequences:
+        if batch_size < 1:
+            raise ValueError("batch_size must be positive")
+
+        fragments = []
+        owners = []
+        for sequence_index, seq in enumerate(sequences):
             seq_str = str(seq).strip().upper()
             invalid_chars = set(re.findall(r'[^ARNDCQEGHILKMFPSTWYV]', seq_str))
             if invalid_chars:
                 bad_chars = ", ".join(sorted(list(invalid_chars)))
                 raise ValueError(f"Sequence contains invalid/non-standard amino acid character(s): '{bad_chars}'. Only the 20 standard amino acids (A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y) are permitted.")
-            clean_seq = seq_str
+            for window in _esm_windows(seq_str, long_sequence_policy):
+                fragments.append(window)
+                owners.append(sequence_index)
 
-            # Windowing logic for long sequences (> 1022 residues)
-            win_size = 1022
-            stride = 894  # 1022 - 128 overlap
-            if len(clean_seq) <= win_size:
-                windows = [clean_seq]
-            else:
-                windows = []
-                for start_idx in range(0, len(clean_seq) - win_size + 1, stride):
-                    windows.append(clean_seq[start_idx : start_idx + win_size])
-                if (len(clean_seq) - win_size) % stride != 0:
-                    windows.append(clean_seq[-win_size:])
+        sums = np.zeros((len(sequences), 1280), dtype=np.float64)
+        counts = np.zeros(len(sequences), dtype=np.int64)
+        with torch.inference_mode():
+            for offset in range(0, len(fragments), batch_size):
+                batch = fragments[offset : offset + batch_size]
+                encoded = tokenizer(
+                    batch,
+                    return_tensors="pt",
+                    padding=True,
+                    truncation=True,
+                    max_length=1024,
+                    return_special_tokens_mask=True,
+                )
+                special = encoded.pop("special_tokens_mask").to(device)
+                encoded = {name: tensor.to(device) for name, tensor in encoded.items()}
+                hidden = model(**encoded).last_hidden_state
+                residue_mask = encoded["attention_mask"].unsqueeze(-1) * (
+                    1 - special.unsqueeze(-1)
+                )
+                pooled = (hidden * residue_mask).sum(dim=1) / residue_mask.sum(
+                    dim=1
+                ).clamp(min=1)
+                for row, embedding in enumerate(pooled.float().cpu().numpy()):
+                    owner = owners[offset + row]
+                    sums[owner] += embedding
+                    counts[owner] += 1
 
-            win_embeds = []
-            with torch.no_grad():
-                for win in windows:
-                    inputs = tokenizer(win, return_tensors="pt", padding=False, truncation=True, max_length=1024).to(device)
-                    outputs = model(**inputs)
-                    last_hidden = outputs.last_hidden_state.squeeze(0)[1:-1]  # Remove CLS/EOS
-                    win_embed = last_hidden.mean(dim=0).cpu().numpy()
-                    win_embeds.append(win_embed)
-
-            avg_embed = np.mean(win_embeds, axis=0)
-            embeddings.append(avg_embed)
-
-        return np.array(embeddings, dtype=np.float32)
+        if np.any(counts == 0):
+            raise RuntimeError("ESM-2 extraction produced no windows for a sequence")
+        return (sums / counts[:, None]).astype(np.float32)
 
     except Exception as e:
         raise RuntimeError(f"ESM-2 embedding extraction failed: {e}") from e
@@ -965,17 +999,13 @@ def extract_esm2_embeddings(sequences, use_lora=False, device=None):
 
 def extract_phase1_features(sequences, esm2_embeddings=None):
     """
-    Extract exact 4,248-dim Phase 1 Ultimate Hybrid feature matrix:
-    [1,280 ESM-2 (Fold 5 LoRA)] + [2,968 Descriptors] = 4,248 dimensions.
+    Extract the final Phase 1 1,280-dimensional frozen ESM-2 representation.
     """
     if esm2_embeddings is None:
-        esm2_embeddings = extract_esm2_embeddings(sequences, use_lora=True)
-
-    feature_matrix = []
-    for i, seq in enumerate(sequences):
-        esm_vec = esm2_embeddings[i]
-        desc_vec = extract_phase1_descriptors(seq)
-        combined = np.concatenate([esm_vec, desc_vec], axis=0)
-        feature_matrix.append(combined)
-
-    return np.array(feature_matrix, dtype=np.float32)
+        esm2_embeddings = extract_esm2_embeddings(
+            sequences, long_sequence_policy="windowed"
+        )
+    matrix = np.asarray(esm2_embeddings, dtype=np.float32)
+    if matrix.ndim != 2 or matrix.shape[1] != 1280:
+        raise ValueError(f"Phase 1 expects an N x 1280 embedding matrix, got {matrix.shape}")
+    return matrix

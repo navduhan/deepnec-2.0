@@ -31,11 +31,14 @@ class ParseFastaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "'B'"):
             self._parse("ARNDCQEGHILKMFPSTWYVARNDCQEGHILB")
 
-    def test_checks_minimum_length_after_x_removal(self):
+    def test_rejects_sequence_empty_after_x_removal(self):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            with self.assertRaisesRegex(ValueError, "shorter than the minimum"):
-                self._parse("ARNDCQEGHILKMFPSTWYVARNDCQEGHIX")
+            with self.assertRaisesRegex(ValueError, "empty after removing"):
+                self._parse("XXXX")
+
+    def test_accepts_short_valid_protein_for_esm2_only_phase1(self):
+        self.assertEqual(self._parse("ARNDCQ")[0]["seq"], "ARNDCQ")
 
 
 if __name__ == "__main__":

@@ -1,56 +1,48 @@
 # Author: Naveen Duhan
-"""
-DeepNEC 2.0 Configuration
-Central repository of class mappings, pathway mappings, and model constants.
-"""
+"""Canonical class orders and routing for the corrected DeepNEC 2.0 models."""
 
-# Phase 1: Binary Enzyme vs Non-Enzyme (Index 0 = Enzyme, Index 1 = Non-enzyme)
-PHASE1_CLASSES = ["Enzyme", "Non-enzyme"]
-
-# Phase 2: Binary Nitrogen vs Non-Nitrogen Metabolism (Index 0 = Nitrogen, Index 1 = Non-nitrogen)
-PHASE2_CLASSES = ["Nitrogen", "Non-nitrogen"]
-
-# Phase 3: 10 Nitrogen Pathways
+# These orders must remain identical to the output-node orders recorded by the
+# final Round 2 model manifests.
+PHASE1_CLASSES = ["enzyme", "non_enzyme"]
+PHASE2_CLASSES = ["nitrogen", "non_nitrogen"]
 PHASE3_CLASSES = [
-    "ADDN",
-    "Anammox",
-    "Assimilatory",
-    "DN",
-    "Denitrification",
-    "DD",
-    "DDN",
-    "Dissimilatory",
-    "Nitrogen_Fixation",
-    "Nitrification"
+    "anammox",
+    "assimilatory",
+    "denitrification",
+    "denitrification_nitrification",
+    "dissimilatory",
+    "dissimilatory_denitrification",
+    "dissimilatory_denitrification_nitrification",
+    "hydroxylamine_reduction",
+    "nitrification",
+    "nitrogen_fixation",
 ]
 
-# Phase 4: Multi-EC Pathway to EC Number Mappings
+# Five pathway-conditioned learned classifiers (16 terminal outputs).
 PATHWAY_EC_MAPPING = {
     "anammox": ["1.7.2.7", "1.7.2.8"],
     "assimilatory": [
-        "1.4.1.13-14",
+        "1.4.1.13-14+1.4.7.1",
         "1.4.1.2",
         "1.4.1.3",
         "1.4.1.4",
-        "1.4.7.1",
-        "1.7.1.1-3",
+        "1.7.1.1-3+1.7.7.2",
         "1.7.1.4",
         "1.7.7.1",
-        "1.7.7.2",
-        "6.3.1.2"
+        "6.3.1.2",
     ],
-    "addn": ["1.7.99.-", "1.7.99.4"],
     "denitrification": ["1.7.2.4", "1.7.2.5"],
     "dissimilatory": ["1.7.1.15", "1.7.2.2"],
-    "nitrification": ["1.14.99.39", "1.7.2.6"]
+    "nitrification": ["1.14.99.39", "1.7.2.6"],
 }
 
-# Direct 1-to-1 Pathway EC Mappings
+# Five single-EC Phase 3 branches (five direct terminal outputs).
 DIRECT_EC_MAPPING = {
-    "DD": "1.9.6.1",                     # dissimilatory_denitrification
-    "DDN": "1.7.5.1",                    # dissimilatory_denitrification_nitrification
-    "DN": "1.7.2.1",                     # denitrification_nitrification
-    "Nitrogen_Fixation": "1.18.6.1"      # nitrogen_fixation
+    "denitrification_nitrification": "1.7.2.1",
+    "dissimilatory_denitrification": "1.9.6.1",
+    "dissimilatory_denitrification_nitrification": "1.7.5.1",
+    "hydroxylamine_reduction": "1.7.99.1",
+    "nitrogen_fixation": "1.18.6.1",
 }
 
 # Cofactor Motif Regex Patterns

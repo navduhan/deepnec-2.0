@@ -5,19 +5,19 @@
 [![Documentation Status](https://readthedocs.org/projects/deepnec-20/badge/?version=latest)](https://deepnec-20.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](LICENSE)
 
-**DeepNEC 2.0** is an alignment-free, deep learning-based hierarchical framework for high-precision **Nitrogen Metabolism Enzyme Classification** and **EC Number Prediction** across 28 specific enzyme classes.
+**DeepNEC 2.0** is an alignment-free hierarchical framework for **nitrogen-metabolism enzyme classification** and **EC assignment**. The corrected merged ontology produces 21 terminal labels from 26 current EC annotations.
 
 ---
 
 ## Key Features
 
 - **Hierarchical 4-Phase Pipeline**:
-  - **Phase 1**: Binary Enzyme vs. Non-Enzyme Classifier (Ultimate Hybrid 4,248-dim Architecture, Validation Best Fold 5, Test Accuracy: **93.62%**, Test MCC: **0.8718**)
-  - **Phase 2**: Binary Nitrogen Metabolism vs. Non-Nitrogen Metabolism Classifier (Validation Best Fold 1, Test Accuracy: **99.38%**, Test MCC: **0.9738**)
-  - **Phase 3**: 10-Pathway Nitrogen Metabolism Sub-pathway Predictor (Validation Best Fold 4, Test Accuracy: **95.62%**, Test MCC: **0.9478**)
-  - **Phase 4**: Fine-Grained EC Number Predictor covering 28 specific EC numbers across 24 pathway outputs (Test MCC: **0.9142 – 1.0000**)
+  - **Phase 1**: Final frozen ESM-2 enzyme/non-enzyme classifier.
+  - **Phase 2**: Final ESM-2 nitrogen/non-nitrogen classifier.
+  - **Phase 3**: Final ESM-2 classifier for 10 corrected nitrogen-pathway classes.
+  - **Phase 4**: Five learned pathway-conditioned classifiers and five deterministic single-EC mappings.
 - **Modern Packaging & Ultra-Fast TFLite Engine**:
-  - Managed via **PEP 621 (pyproject.toml)** with `peft` dependency and reproducible **uv.lock**.
+  - Managed via **PEP 621 (pyproject.toml)** with a reproducible **uv.lock**.
   - Powered by compressed, lightweight **TensorFlow Lite (.tflite)** flatbuffers for fast CPU inference.
 - **Multiple CLI Entry Point Aliases**:
   - Access via `deepnec`, `deepnec2`, or `deepnec2.0`.
@@ -30,17 +30,16 @@
 
 ## Production Model Selection & Benchmarks
 
-| Phase & Target Category | Selected Architecture | Deployed Fold (Val Best) | Independent Test MCC | Independent Test Accuracy | Model Format & Size |
-| :--- | :--- | :---: | :---: | :---: | :--- |
-| **Phase 1** (Binary Enzyme Filter) | **Ultimate Hybrid** (ESM2-32 LoRA + Descriptors, 4,248-dim) | **Fold 5** | **0.8718** | **93.62%** | .tflite (17.60 MB) |
-| **Phase 2** (Nitrogen Filter) | **ESM-2 650M** | **Fold 1** | **0.9738** | **99.38%** | .tflite (2.76 MB) |
-| **Phase 3** (10 Sub-pathways) | **ESM-2 650M** | **Fold 4** | **0.9478** | **95.62%** | .tflite (2.76 MB) |
-| **Phase 4** (Anammox ECs) | **ESM-2 650M** | **Fold 1** | **0.9142** | **95.90%** | .tflite (2.76 MB) |
-| **Phase 4** (Assimilatory ECs) | **ESM-2 650M** | **Fold 3** | **0.9194** | **93.25%** | .tflite (2.76 MB) |
-| **Phase 4** (Denitrification ECs) | **ESM-2 650M** | **Fold 1** | **1.0000** | **100.00%** | .tflite (2.76 MB) |
-| **Phase 4** (Dissimilatory ECs) | **ESM-2 650M** | **Fold 1** | **1.0000** | **100.00%** | .tflite (2.76 MB) |
-| **Phase 4** (Nitrification ECs) | **ESM-2 650M** | **Fold 2** | **0.9931** | **99.77%** | .tflite (2.76 MB) |
-| **Phase 4** (All Sub-pathways / ADDN) | **ESM-2 650M** | **Fold 1** | **1.0000** | **100.00%** | .tflite (2.76 MB) |
+| Phase & target | Deployed model | Corrected test accuracy | Corrected test MCC |
+| :--- | :--- | :---: | :---: |
+| **Phase 1** enzyme filter | Final all-training ESM-2 | **93.44%** | **0.8683** |
+| **Phase 2** nitrogen filter | Final all-training ESM-2 | **97.75%** | **0.9492** |
+| **Phase 3** 10 pathways | Final all-training ESM-2 | **95.60%** | **0.9455** |
+| **Phase 4** anammox | Final all-training ESM-2 | **100.00%** | **1.0000** |
+| **Phase 4** assimilatory merged 8-class | Final all-training ESM-2 | **97.26%** | **0.9613** |
+| **Phase 4** denitrification | Final all-training ESM-2 | **100.00%** | **1.0000** |
+| **Phase 4** dissimilatory | Final all-training ESM-2 | **100.00%** | **1.0000** |
+| **Phase 4** nitrification | Final all-training ESM-2 | **100.00%** | **1.0000** |
 
 ---
 
@@ -125,7 +124,7 @@ If you encounter `zsh: command not found: deepnec`:
 
 ### Protein sequence validation
 
-Protein FASTA records must contain at least 31 standard amino acids after cleaning. Unknown residues represented by `X` are removed before feature extraction, with a warning reporting how many were removed; the original sequence is retained in the parsed-record metadata. Other ambiguous or non-standard symbols (including `B`, `Z`, `J`, `U`, and `O`) are rejected because they are not interpreted consistently by all deployed feature extractors.
+Unknown residues represented by `X` are removed before feature extraction, with a warning reporting how many were removed; the original sequence is retained in parsed-record metadata. Other ambiguous or non-standard symbols (including `B`, `Z`, `J`, `U`, and `O`) are rejected. Phase 1 uses overlapping 1,022-residue windows for long proteins; Phases 2–4 truncate to the first 1,022 residues to reproduce their training preprocessing.
 
 Run the validation tests with:
 

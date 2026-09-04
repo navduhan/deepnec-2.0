@@ -3,7 +3,7 @@
 Title: DeepNEC 2.0 Main Execution Script
 Author: Naveen Duhan
 Lab: KAABiL (Kaundal Artificial Intelligence & Advanced Bioinformatics Lab)
-Version: 2.0.2
+Version: 2.0.3
 """
 
 import os
@@ -65,8 +65,8 @@ def run_dnn_pipeline(fasta_file, output_dir, level, pathway_target):
 
     print(f"Loaded {len(records)} query sequences from {fasta_file}")
 
-    # Phase 1: Ultimate Hybrid Fold 5 LoRA + Descriptors (4,248-dim)
-    print("Running Phase 1: Binary Enzyme Filter (Ultimate Hybrid Fold 5 LoRA + Descriptors)...")
+    # Phase 1: final frozen ESM-2 model fitted to all eligible training data.
+    print("Running Phase 1: Binary Enzyme Filter (final frozen ESM-2 model)...")
     phase1_ids, p1_df = nn_prediction.predict_phase1(records)
     p1_out = os.path.join(output_dir, "Phase_1_predictions.tsv")
     p1_df.to_csv(p1_out, sep="\t", index=False)
@@ -80,10 +80,13 @@ def run_dnn_pipeline(fasta_file, output_dir, level, pathway_target):
         return p1_df
 
     # Phase 2: Base ESM-2 embeddings computed for sequences passing Phase 1
-    p1_records = [r for r in records if r['id'] in set(phase1_ids)]
-    print("Extracting base ESM-2 650M embeddings for Phase 2–4...")
+    phase1_id_set = set(phase1_ids)
+    p1_records = [r for r in records if r['id'] in phase1_id_set]
+    print("Extracting training-compatible ESM-2 650M embeddings for Phase 2–4...")
     from deepNEC.features import extract_esm2_embeddings
-    esm2_embeddings = extract_esm2_embeddings([r['seq'] for r in p1_records], use_lora=False)
+    esm2_embeddings = extract_esm2_embeddings(
+        [r['seq'] for r in p1_records], long_sequence_policy="truncate"
+    )
 
     phase2_ids, p2_df = nn_prediction.predict_phase2(p1_records, esm2_embeddings=esm2_embeddings)
     p2_out = os.path.join(output_dir, "Phase_2_predictions.tsv")
@@ -98,8 +101,9 @@ def run_dnn_pipeline(fasta_file, output_dir, level, pathway_target):
         return p2_df
 
     # Phase 3
-    p2_records = [r for r in p1_records if r['id'] in set(phase2_ids)]
-    p2_esm_indices = [i for i, r in enumerate(p1_records) if r['id'] in set(phase2_ids)]
+    phase2_id_set = set(phase2_ids)
+    p2_records = [r for r in p1_records if r['id'] in phase2_id_set]
+    p2_esm_indices = [i for i, r in enumerate(p1_records) if r['id'] in phase2_id_set]
     p2_esm_embeddings = esm2_embeddings[p2_esm_indices] if esm2_embeddings is not None else None
 
     pathway_seqs, p3_df = nn_prediction.predict_phase3(p2_records, esm2_embeddings=p2_esm_embeddings)
@@ -114,7 +118,7 @@ def run_dnn_pipeline(fasta_file, output_dir, level, pathway_target):
     p4_results_list = []
 
     if pathway_target in ['all_models', 'all_pathways']:
-        # Run ALL 10 pathway models on all sequences that passed Phase 2
+        # Diagnostic mode: evaluate every learned head and direct mapping.
         all_pathways = list(nn_prediction.config.PATHWAY_EC_MAPPING.keys()) + list(nn_prediction.config.DIRECT_EC_MAPPING.keys())
         for pw_name in all_pathways:
             print(f"[Phase 4] Predicting EC numbers for pathway '{pw_name}' (ALL {len(p2_records)} sequences)...")
@@ -135,7 +139,8 @@ def run_dnn_pipeline(fasta_file, output_dir, level, pathway_target):
                 continue
 
             print(f"[Phase 4] Predicting EC numbers for pathway '{pw_name}' ({len(seqs)} sequences)...")
-            pw_esm_indices = [i for i, r in enumerate(p1_records) if r['id'] in set([s['id'] for s in seqs])]
+            pathway_ids = {record['id'] for record in seqs}
+            pw_esm_indices = [i for i, r in enumerate(p1_records) if r['id'] in pathway_ids]
             pw_esm_embeddings = esm2_embeddings[pw_esm_indices] if esm2_embeddings is not None else None
 
             try:
@@ -176,7 +181,7 @@ def main():
         'Phase1': 'Binary Enzyme vs. Non-Enzyme Filtering',
         'Phase2': 'Nitrogen Metabolism Enzyme Identification',
         'Phase3': '10-Pathway Sub-pathway Classification',
-        'Phase4': 'Fine-Grained EC Number Assignment (28 EC Numbers across 24 Output Classes)'
+        'Phase4': 'Fine-Grained Assignment (21 Labels from 26 Current EC Annotations)'
     }
     desc = phase_descriptions.get(options.level, 'Enzyme & EC Prediction')
 

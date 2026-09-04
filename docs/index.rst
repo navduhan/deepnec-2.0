@@ -1,9 +1,9 @@
 deepNEC 2.0 Documentation
 =========================
 
-**deepNEC 2.0** is an alignment-free, deep learning-based hierarchical framework for high-precision **Nitrogen Metabolism Enzyme Classification** and **Enzyme Commission (EC) Number Prediction** across 28 specific nitrogen metabolism enzyme classes.
+**DeepNEC 2.0.3** is an alignment-free hierarchical framework for **nitrogen-metabolism enzyme classification** and **Enzyme Commission (EC) assignment**. Its corrected merged ontology has 21 terminal labels representing 26 current source EC annotations.
 
-Powered by **ESM-2 650M Protein Language Model embeddings**, **ESM-2 Fold 5 LoRA fine-tuning**, and **2,968 physical-chemical sequence descriptors**, deepNEC 2.0 achieves state-of-the-art performance across all four hierarchical prediction phases.
+All eight learned tasks use final models fitted to their eligible Round 2 training records and frozen **ESM-2 650M** residue-mean embeddings.
 
 .. image:: https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-blue.svg
    :target: https://www.python.org/
@@ -17,15 +17,15 @@ Key Features
 
 * **Hierarchical 4-Phase Architecture**:
 
-  - **Phase 1**: Binary Enzyme vs. Non-Enzyme Classifier (*Ultimate Hybrid Fold 5 LoRA + 2,968 Descriptors*, Selection Val MCC: ``0.8929``, Test MCC: ``0.8718``, Accuracy: ``93.62%``).
-  - **Phase 2**: Nitrogen Metabolism Enzyme Filter (*ESM-2 650M Standalone*, Selection Val MCC: ``0.9864``, Test MCC: ``0.9738``, Accuracy: ``99.38%``).
-  - **Phase 3**: 10 Nitrogen Sub-pathway Classifier (*ESM-2 650M Standalone*, Selection Val MCC: ``0.9512``, Test MCC: ``0.9478``, Accuracy: ``95.62%``).
-  - **Phase 4**: Fine-Grained EC Number Predictor covering **28 specific EC numbers across 24 output classes** (Test MCC: ``0.9142 – 1.0000``).
+  - **Phase 1**: Final frozen ESM-2 enzyme/non-enzyme classifier.
+  - **Phase 2**: Final ESM-2 nitrogen/non-nitrogen classifier.
+  - **Phase 3**: Final ESM-2 classifier for ten corrected pathway classes.
+  - **Phase 4**: Five learned classifiers plus five direct single-EC mappings.
 
 * **Strict Input Validation & Security**:
 
   - Real-time client & CLI FASTA validation enforcing strict standard 20 amino acid codes.
-  - Minimum sequence length check (>= 31 residues required for PAAC feature extraction).
+  - Empty-after-cleaning and duplicate-identifier checks.
   - Duplicate identifier detection preventing silent pipeline corruption.
 
 * **Ultra-Fast TensorFlow Lite Flatbuffer Engine**:

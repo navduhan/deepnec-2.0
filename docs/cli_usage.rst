@@ -72,31 +72,31 @@ The ``-n`` / ``--pathway`` flag accepts both full canonical pathway names and st
      - ``nitrification``
      - Nitrification Pathway (EC 1.14.99.39, EC 1.7.2.6).
    * - ``nfix``, ``nitrogen_fixation``
-     - ``Nitrogen_Fixation``
+     - ``nitrogen_fixation``
      - Nitrogen Fixation (Nitrogenase EC 1.18.6.1).
    * - ``anammox``
      - ``anammox``
      - Anaerobic Ammonium Oxidation (EC 1.7.2.7, EC 1.7.2.8).
    * - ``assim``, ``assimilatory``
      - ``assimilatory``
-     - Assimilatory Nitrate Reduction (10 EC classes).
+     - Assimilatory pathway (eight corrected merged labels).
    * - ``dissim``, ``dissimilatory``
      - ``dissimilatory``
      - Dissimilatory Nitrate Reduction (EC 1.7.1.15, EC 1.7.2.2).
    * - ``denitri``, ``denitrification``
      - ``denitrification``
      - Denitrification Pathway (EC 1.7.2.4, EC 1.7.2.5).
-   * - ``addn``
-     - ``addn``
-     - Combined ADDN complex pathways (EC 1.7.99.-, EC 1.7.99.4).
+   * - ``hydroxylamine_reduction``
+     - ``hydroxylamine_reduction``
+     - Hydroxylamine reduction (direct EC 1.7.99.1).
    * - ``ddn``
-     - ``DDN``
+     - ``dissimilatory_denitrification_nitrification``
      - Dissimilatory + Denitrification + Nitrification (EC 1.7.5.1).
    * - ``dn``
-     - ``DN``
+     - ``denitrification_nitrification``
      - Denitrification + Nitrification (EC 1.7.2.1).
    * - ``dd``
-     - ``DD``
+     - ``dissimilatory_denitrification``
      - Dissimilatory + Denitrification (EC 1.9.6.1).
 
 Example Commands

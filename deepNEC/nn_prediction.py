@@ -5,12 +5,11 @@ Loads compressed TFLite models to perform predictions across Phases 1–4.
 """
 
 import os
-import glob
 import numpy as np
 import pandas as pd
 
 from deepNEC import config
-from deepNEC.features import extract_cksaap, extract_cksaap_motif, extract_esm2_embeddings, extract_phase1_features
+from deepNEC.features import extract_esm2_embeddings, extract_phase1_features
 
 
 class TFLiteModelWrapper:
@@ -62,7 +61,7 @@ def get_model_path(phase_name):
     base_dir = os.path.dirname(__file__)
 
     if phase_name in ['phase1', 'p1']:
-        p1_path = os.path.join(base_dir, 'data', 'models', 'phase1', "phase1_ultimate_hybrid.tflite")
+        p1_path = os.path.join(base_dir, 'data', 'models', 'phase1', "phase1_esm2.tflite")
         if os.path.exists(p1_path):
             return p1_path
 
@@ -97,15 +96,15 @@ def load_inference_model(model_path):
 
 def predict_phase1(seq_records, esm2_embeddings=None):
     """
-    Phase 1: Binary Enzyme vs Non-Enzyme (Using Ultimate Hybrid 4,248-dim TFLite Model with Fold 5 LoRA Adapter)
+    Phase 1: Binary enzyme vs non-enzyme using the final 1,280-dim ESM-2 model.
     """
     ids = [r['id'] for r in seq_records]
     seqs = [r['seq'] for r in seq_records]
 
     m_esm = load_inference_model(get_model_path('phase1'))
 
-    # Phase 1 ALWAYS computes Fold 5 LoRA ESM-2 embeddings + 2,968 descriptors (4,248-dim)
-    x_input = extract_phase1_features(seqs, esm2_embeddings=None)
+    # Phase 1 was trained with windowed residue-mean ESM-2 embeddings.
+    x_input = extract_phase1_features(seqs, esm2_embeddings=esm2_embeddings)
 
     probs = m_esm.predict(x_input)
     preds = np.argmax(probs, axis=1)
@@ -117,7 +116,7 @@ def predict_phase1(seq_records, esm2_embeddings=None):
         prob_enzyme = float(probs[i][0])
         prob_non_enzyme = float(probs[i][1])
 
-        if pred_label == "Enzyme":
+        if pred_label == "enzyme":
             passed_ids.append(seq_id)
 
         results.append({
@@ -137,7 +136,11 @@ def predict_phase2(seq_records, esm2_embeddings=None):
     ids = [r['id'] for r in seq_records]
     seqs = [r['seq'] for r in seq_records]
 
-    x_esm = esm2_embeddings if esm2_embeddings is not None else extract_esm2_embeddings(seqs)
+    x_esm = (
+        esm2_embeddings
+        if esm2_embeddings is not None
+        else extract_esm2_embeddings(seqs, long_sequence_policy="truncate")
+    )
     m_esm = load_inference_model(get_model_path('phase2'))
     probs = m_esm.predict(x_esm)
 
@@ -150,7 +153,7 @@ def predict_phase2(seq_records, esm2_embeddings=None):
         prob_nitrogen = float(probs[i][0])
         prob_non_nitrogen = float(probs[i][1])
 
-        if pred_label == "Nitrogen":
+        if pred_label == "nitrogen":
             passed_ids.append(seq_id)
 
         results.append({
@@ -170,7 +173,11 @@ def predict_phase3(seq_records, esm2_embeddings=None):
     ids = [r['id'] for r in seq_records]
     seqs = [r['seq'] for r in seq_records]
 
-    x_esm = esm2_embeddings if esm2_embeddings is not None else extract_esm2_embeddings(seqs)
+    x_esm = (
+        esm2_embeddings
+        if esm2_embeddings is not None
+        else extract_esm2_embeddings(seqs, long_sequence_policy="truncate")
+    )
     m_esm = load_inference_model(get_model_path('phase3'))
     probs = m_esm.predict(x_esm)
     preds = np.argmax(probs, axis=1)
@@ -207,9 +214,9 @@ def predict_phase4(seq_records, pathway_name, esm2_embeddings=None):
 
     pw_key = pathway_name.lower()
 
-    # Check if direct 1-to-1 mapping exists
-    if pathway_name in config.DIRECT_EC_MAPPING:
-        ec_num = config.DIRECT_EC_MAPPING[pathway_name]
+    # Check if direct 1-to-1 mapping exists.
+    if pw_key in config.DIRECT_EC_MAPPING:
+        ec_num = config.DIRECT_EC_MAPPING[pw_key]
         results = [{'SampleID': r['id'], 'EC_Number': ec_num, 'Confidence': 100.0} for r in seq_records]
         return pd.DataFrame(results)
 
@@ -220,7 +227,11 @@ def predict_phase4(seq_records, pathway_name, esm2_embeddings=None):
     ids = [r['id'] for r in seq_records]
     seqs = [r['seq'] for r in seq_records]
 
-    x_esm = esm2_embeddings if esm2_embeddings is not None else extract_esm2_embeddings(seqs)
+    x_esm = (
+        esm2_embeddings
+        if esm2_embeddings is not None
+        else extract_esm2_embeddings(seqs, long_sequence_policy="truncate")
+    )
     m_esm = load_inference_model(get_model_path(pw_key))
     probs = m_esm.predict(x_esm)
     preds = np.argmax(probs, axis=1)

@@ -1,63 +1,64 @@
 Hierarchical Pipeline Architecture
 ===================================
 
-deepNEC 2.0 uses a 4-stage hierarchical deep learning architecture designed for alignment-free enzyme classification and EC prediction.
+DeepNEC 2.0.3 uses the final Round 2 models in a four-phase hierarchy. All
+learned heads consume 1,280-dimensional residue-mean embeddings from
+``facebook/esm2_t33_650M_UR50D``.
 
-Overview of Prediction Phases
------------------------------
+Prediction phases
+-----------------
 
-Phase 1: Binary Enzyme Filter
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Classifies query proteins into **Enzyme** vs. **Non-enzyme**.
+Phase 1: enzyme filter
+~~~~~~~~~~~~~~~~~~~~~~
 
-* **Feature Vector**: 4,248-dimensional multi-descriptor representation:
-  - 1,280-dim mean-pooled **ESM-2 650M Fold 5 LoRA** fine-tuned embeddings.
-  - 2,968 physical-chemical descriptors (CKSAAP $k=0,1,2,3,4,5$, AAC, PAAC, CTD, amphiphilic pseudo-amino acid composition).
-* **Classifier**: Deep Neural Network flatbuffer (``phase1_ultimate_hybrid.tflite``, 18.46 MB).
-* **Performance**: Selection Val MCC ``0.8929``, Test MCC ``0.8718``, Test Accuracy ``93.62%``.
+The final frozen model classifies proteins as ``enzyme`` or ``non_enzyme``.
+For proteins longer than 1,022 residues, DeepNEC averages embeddings from
+overlapping 1,022-residue windows with 128-residue overlap, matching Phase 1
+training.
 
-Phase 2: Nitrogen Metabolism Filter
+Phase 2: nitrogen-metabolism filter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Filters Phase 1 enzymes into **Nitrogen Metabolism Enzyme** vs. **Non-nitrogen Metabolism Enzyme**.
 
-* **Feature Representation**: Base mean-pooled 1,280-dim **ESM-2 650M** embeddings.
-* **Classifier**: Deep Neural Network flatbuffer (``phase2_esm2.tflite``, 2.76 MB).
-* **Performance**: Selection Val MCC ``0.9864``, Test MCC ``0.9738``, Test Accuracy ``99.38%``.
+Sequences predicted as enzymes are classified as ``nitrogen`` or
+``non_nitrogen``. Phase 2 and every later learned head use the first 1,022
+residues of a longer protein, matching the embeddings used to train those
+models.
 
-Phase 3: 10-Pathway Sub-pathway Predictor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Classifies nitrogen metabolism enzymes across 10 sub-pathways:
+Phase 3: corrected pathway classifier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. ``ADDN`` (Assimilatory + Dissimilatory + Denitrification + Nitrification)
-2. ``Anammox`` (Anaerobic Ammonium Oxidation)
-3. ``Assimilatory`` (Assimilatory Nitrate Reduction)
-4. ``DN`` (Denitrification + Nitrification)
-5. ``Denitrification`` (Respiratory Denitrification)
-6. ``DD`` (Dissimilatory + Denitrification)
-7. ``DDN`` (Dissimilatory + Denitrification + Nitrification)
-8. ``Dissimilatory`` (Dissimilatory Nitrate Reduction)
-9. ``Nitrogen_Fixation`` (Nitrogen Fixation)
-10. ``Nitrification`` (Nitrification)
+Nitrogen-metabolism sequences are assigned to one of ten classes:
 
-* **Classifier**: Deep Neural Network flatbuffer (``phase3_esm2.tflite``, 2.76 MB, Fold 4).
-* **Performance**: Selection Val MCC ``0.9512``, Test MCC ``0.9478``, Test Accuracy ``95.62%``.
+* ``anammox``
+* ``assimilatory``
+* ``denitrification``
+* ``denitrification_nitrification``
+* ``dissimilatory``
+* ``dissimilatory_denitrification``
+* ``dissimilatory_denitrification_nitrification``
+* ``hydroxylamine_reduction``
+* ``nitrification``
+* ``nitrogen_fixation``
 
-Phase 4: Fine-Grained EC Number Assignment (24 Output Classes)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Predicts fine-grained EC numbers across 24 ground truth output classes:
+Phase 4: terminal assignment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* **6 Multi-EC Learned Branches (20 Output Classes)**:
-  - ``anammox``: 2 EC classes (1.7.2.7, 1.7.2.8)
-  - ``assimilatory``: 10 EC classes (1.4.1.13-14, 1.4.1.2, 1.4.1.3, 1.4.1.4, 1.4.7.1, 1.7.1.1-3, 1.7.1.4, 1.7.7.1, 1.7.7.2, 6.3.1.2)
-  - ``addn``: 2 EC classes (1.7.99.-, 1.7.99.4)
-  - ``denitrification``: 2 EC classes (1.7.2.4, 1.7.2.5)
-  - ``dissimilatory``: 2 EC classes (1.7.1.15, 1.7.2.2)
-  - ``nitrification``: 2 EC classes (1.14.99.39, 1.7.2.6)
-* **4 Direct 1-to-1 Pathway Mappings (4 Output Classes)**:
-  - ``DD``: 1.9.6.1
-  - ``DDN``: 1.7.5.1
-  - ``DN``: 1.7.2.1
-  - ``Nitrogen_Fixation``: 1.18.6.1
+Five branches use pathway-conditioned learned classifiers:
 
-* **Total Output Classes**: **24 Output Classes** covering 28 specific EC numbers.
-* **Performance**: Independent Test MCC ``0.9142 – 1.0000``.
+* ``anammox``: 1.7.2.7, 1.7.2.8
+* ``assimilatory``: eight merged labels defined in the deployment manifest
+* ``denitrification``: 1.7.2.4, 1.7.2.5
+* ``dissimilatory``: 1.7.1.15, 1.7.2.2
+* ``nitrification``: 1.14.99.39, 1.7.2.6
+
+Five single-EC branches are mapped deterministically:
+
+* ``denitrification_nitrification``: 1.7.2.1
+* ``dissimilatory_denitrification``: 1.9.6.1
+* ``dissimilatory_denitrification_nitrification``: 1.7.5.1
+* ``hydroxylamine_reduction``: 1.7.99.1
+* ``nitrogen_fixation``: 1.18.6.1
+
+The merged corrected ontology therefore has 16 learned terminal labels and
+five direct labels: 21 deployable labels representing 26 current source EC
+annotations. Obsolete 1.7.99.4 and incomplete 1.7.99.- are not outputs.
