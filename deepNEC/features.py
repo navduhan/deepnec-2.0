@@ -940,7 +940,7 @@ def extract_esm2_embeddings(
 
         if use_lora:
             raise ValueError(
-                "LoRA inference was retired in DeepNEC 2.0.3; use the final frozen "
+                "LoRA inference was retired in DeepNEC 2.0.4; use the final frozen "
                 "ESM-2 model without an adapter."
             )
         model = base_model.to(device)

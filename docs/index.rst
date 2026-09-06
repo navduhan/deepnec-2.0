@@ -1,7 +1,7 @@
 deepNEC 2.0 Documentation
 =========================
 
-**DeepNEC 2.0.3** is an alignment-free hierarchical framework for **nitrogen-metabolism enzyme classification** and **Enzyme Commission (EC) assignment**. Its corrected merged ontology has 21 terminal labels representing 26 current source EC annotations.
+**DeepNEC 2.0.4** is an alignment-free hierarchical framework for **nitrogen-metabolism enzyme classification** and **Enzyme Commission (EC) assignment**. Its corrected merged ontology has 21 terminal labels representing 26 current source EC annotations.
 
 All eight learned tasks use final models fitted to their eligible Round 2 training records and frozen **ESM-2 650M** residue-mean embeddings.
 

@@ -1,7 +1,7 @@
 Hierarchical Pipeline Architecture
 ===================================
 
-DeepNEC 2.0.3 uses the final Round 2 models in a four-phase hierarchy. All
+DeepNEC 2.0.4 uses the final Round 2 models in a four-phase hierarchy. All
 learned heads consume 1,280-dimensional residue-mean embeddings from
 ``facebook/esm2_t33_650M_UR50D``.
 
