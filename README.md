@@ -124,7 +124,7 @@ If you encounter `zsh: command not found: deepnec`:
 
 ### Protein sequence validation
 
-Unknown residues represented by `X` are removed before feature extraction, with a warning reporting how many were removed; the original sequence is retained in parsed-record metadata. Other ambiguous or non-standard symbols (including `B`, `Z`, `J`, `U`, and `O`) are rejected. Phase 1 uses overlapping 1,022-residue windows for long proteins; Phases 2–4 truncate to the first 1,022 residues to reproduce their training preprocessing.
+Unknown residues represented by `X` are removed before feature extraction, with a warning reporting how many were removed; the original sequence is retained in parsed-record metadata. Other ambiguous or non-standard symbols (including `B`, `Z`, `J`, `U`, and `O`) are rejected. Phase 1 uses overlapping 1,022-residue windows with 128-residue overlap for long proteins and counts every residue once in the complete-protein mean; Phases 2–4 truncate to the first 1,022 residues to reproduce their training preprocessing.
 
 Run the validation tests with:
 

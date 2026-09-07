@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from deepNEC import config
-from deepNEC.features import _esm_windows
+from deepNEC.features import _esm_window_bounds, _esm_windows
 from deepNEC.nn_prediction import TFLiteModelWrapper, get_model_path, predict_phase4
 
 
@@ -63,8 +63,22 @@ class TFLiteInferenceTests(unittest.TestCase):
         sequence = "A" * 2200
         self.assertEqual([len(x) for x in _esm_windows(sequence, "truncate")], [1022])
         windows = _esm_windows(sequence, "windowed")
-        self.assertEqual([len(x) for x in windows], [1022, 1022, 1022])
-        self.assertEqual(windows[-1], sequence[-1022:])
+        self.assertEqual([len(x) for x in windows], [1022, 1022, 412])
+
+        bounds = _esm_window_bounds(len(sequence), "windowed")
+        self.assertEqual(
+            sum(keep_end - keep_start for _, _, keep_start, keep_end in bounds),
+            len(sequence),
+        )
+        owned_ranges = [
+            (start + keep_start, start + keep_end)
+            for start, _, keep_start, keep_end in bounds
+        ]
+        self.assertEqual(owned_ranges[0][0], 0)
+        self.assertEqual(owned_ranges[-1][1], len(sequence))
+        self.assertTrue(
+            all(left[1] == right[0] for left, right in zip(owned_ranges, owned_ranges[1:]))
+        )
 
     def test_hydroxylamine_is_a_direct_current_ec_mapping(self):
         result = predict_phase4(

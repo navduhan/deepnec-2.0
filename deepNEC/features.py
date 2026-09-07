@@ -889,23 +889,53 @@ def extract_phase1_descriptors(sequence):
     return np.array(f1 + f2, dtype=np.float32)
 
 
-def _esm_windows(sequence, policy, window_size=1022, overlap=128):
-    """Return training-compatible ESM-2 residue windows for one sequence."""
+def _esm_window_bounds(length, policy, window_size=1022, overlap=128):
+    """Return training-compatible window and residue-ownership bounds.
+
+    Each tuple contains ``(start, end, keep_start, keep_end)`` in residue
+    coordinates. For windowed Phase 1 extraction, midpoint ownership assigns
+    every residue to exactly one window even though adjacent windows overlap.
+    """
     if policy not in {"windowed", "truncate"}:
         raise ValueError("long_sequence_policy must be 'windowed' or 'truncate'")
-    if len(sequence) <= window_size:
-        return [sequence]
+    if length <= 0:
+        raise ValueError("Protein sequences must contain at least one residue")
+    if window_size <= 0 or overlap < 0 or overlap >= window_size:
+        raise ValueError("Require window_size > 0 and 0 <= overlap < window_size")
+    if length <= window_size:
+        return [(0, length, 0, length)]
     if policy == "truncate":
-        return [sequence[:window_size]]
+        return [(0, window_size, 0, window_size)]
 
     stride = window_size - overlap
-    windows = [
-        sequence[start : start + window_size]
-        for start in range(0, len(sequence) - window_size + 1, stride)
+    starts = [0]
+    while starts[-1] + window_size < length:
+        starts.append(starts[-1] + stride)
+    spans = [(start, min(start + window_size, length)) for start in starts]
+    boundaries = [
+        (spans[index][1] + spans[index + 1][0]) // 2
+        for index in range(len(spans) - 1)
     ]
-    if (len(sequence) - window_size) % stride:
-        windows.append(sequence[-window_size:])
-    return windows
+    bounds = []
+    for index, (start, end) in enumerate(spans):
+        keep_global_start = 0 if index == 0 else boundaries[index - 1]
+        keep_global_end = length if index == len(spans) - 1 else boundaries[index]
+        bounds.append(
+            (start, end, keep_global_start - start, keep_global_end - start)
+        )
+    if sum(keep_end - keep_start for _, _, keep_start, keep_end in bounds) != length:
+        raise AssertionError("Chunk ownership does not cover each residue exactly once")
+    return bounds
+
+
+def _esm_windows(sequence, policy, window_size=1022, overlap=128):
+    """Return the ESM-2 residue windows defined by the training contract."""
+    return [
+        sequence[start:end]
+        for start, end, _, _ in _esm_window_bounds(
+            len(sequence), policy, window_size, overlap
+        )
+    ]
 
 
 def extract_esm2_embeddings(
@@ -952,17 +982,21 @@ def extract_esm2_embeddings(
 
         fragments = []
         owners = []
+        keep_ranges = []
         for sequence_index, seq in enumerate(sequences):
             seq_str = str(seq).strip().upper()
             invalid_chars = set(re.findall(r'[^ARNDCQEGHILKMFPSTWYV]', seq_str))
             if invalid_chars:
                 bad_chars = ", ".join(sorted(list(invalid_chars)))
                 raise ValueError(f"Sequence contains invalid/non-standard amino acid character(s): '{bad_chars}'. Only the 20 standard amino acids (A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y) are permitted.")
-            for window in _esm_windows(seq_str, long_sequence_policy):
-                fragments.append(window)
+            for start, end, keep_start, keep_end in _esm_window_bounds(
+                len(seq_str), long_sequence_policy
+            ):
+                fragments.append(seq_str[start:end])
                 owners.append(sequence_index)
+                keep_ranges.append((keep_start, keep_end))
 
-        sums = np.zeros((len(sequences), 1280), dtype=np.float64)
+        sums = np.zeros((len(sequences), 1280), dtype=np.float32)
         counts = np.zeros(len(sequences), dtype=np.int64)
         with torch.inference_mode():
             for offset in range(0, len(fragments), batch_size):
@@ -978,19 +1012,21 @@ def extract_esm2_embeddings(
                 special = encoded.pop("special_tokens_mask").to(device)
                 encoded = {name: tensor.to(device) for name, tensor in encoded.items()}
                 hidden = model(**encoded).last_hidden_state
-                residue_mask = encoded["attention_mask"].unsqueeze(-1) * (
-                    1 - special.unsqueeze(-1)
-                )
-                pooled = (hidden * residue_mask).sum(dim=1) / residue_mask.sum(
-                    dim=1
-                ).clamp(min=1)
-                for row, embedding in enumerate(pooled.float().cpu().numpy()):
+                residue_mask = encoded["attention_mask"].bool() & ~special.bool()
+                for row in range(len(batch)):
+                    residue_embeddings = hidden[row][residue_mask[row]]
+                    if residue_embeddings.shape[0] != len(batch[row]):
+                        raise ValueError(
+                            "Tokenizer residue count does not match the input window"
+                        )
+                    keep_start, keep_end = keep_ranges[offset + row]
+                    kept = residue_embeddings[keep_start:keep_end].float().cpu().numpy()
                     owner = owners[offset + row]
-                    sums[owner] += embedding
-                    counts[owner] += 1
+                    sums[owner] += kept.sum(axis=0)
+                    counts[owner] += kept.shape[0]
 
         if np.any(counts == 0):
-            raise RuntimeError("ESM-2 extraction produced no windows for a sequence")
+            raise RuntimeError("ESM-2 extraction produced no residues for a sequence")
         return (sums / counts[:, None]).astype(np.float32)
 
     except Exception as e:

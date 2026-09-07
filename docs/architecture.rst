@@ -12,9 +12,11 @@ Phase 1: enzyme filter
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The final frozen model classifies proteins as ``enzyme`` or ``non_enzyme``.
-For proteins longer than 1,022 residues, DeepNEC averages embeddings from
-overlapping 1,022-residue windows with 128-residue overlap, matching Phase 1
-training.
+For proteins longer than 1,022 residues, DeepNEC uses overlapping
+1,022-residue windows with 128-residue overlap. Midpoint ownership at each
+overlap assigns every residue to exactly one window before the retained
+residue representations are averaged across the complete protein, matching
+Phase 1 training.
 
 Phase 2: nitrogen-metabolism filter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
