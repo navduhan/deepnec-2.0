@@ -5,7 +5,7 @@
 [![Documentation Status](https://readthedocs.org/projects/deepnec-20/badge/?version=latest)](https://deepnec-20.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](LICENSE)
 
-**DeepNEC 2.0** is an alignment-free hierarchical framework for **nitrogen-metabolism enzyme classification** and **EC assignment**. The corrected merged ontology produces 21 terminal labels from 26 current EC annotations.
+**DeepNEC 2.0** is an alignment-free hierarchical framework for **nitrogen-metabolism enzyme classification** and **EC assignment**. The merged ontology produces 21 terminal labels from 26 current EC annotations.
 
 ---
 
@@ -30,9 +30,9 @@
 
 ## Production Model Selection & Benchmarks
 
-| Phase & target | Deployed model | Corrected test accuracy | Corrected test MCC |
+| Phase & target | Deployed model | Held-out test accuracy | Held-out test MCC |
 | :--- | :--- | :---: | :---: |
-| **Phase 1** enzyme filter | Final all-training ESM-2 | **93.44%** | **0.8683** |
+| **Phase 1** enzyme filter | Final all-training ESM-2 | **93.17%** | **0.8631** |
 | **Phase 2** nitrogen filter | Final all-training ESM-2 | **97.75%** | **0.9492** |
 | **Phase 3** 10 pathways | Final all-training ESM-2 | **95.60%** | **0.9455** |
 | **Phase 4** anammox | Final all-training ESM-2 | **100.00%** | **1.0000** |
@@ -49,7 +49,7 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/navduhan/deepnec-2.0.git
+git clone https://github.com/usubioinfo/deepnec-2.0.git
 cd deepnec-2.0
 
 # Create virtual environment & install package in editable mode
