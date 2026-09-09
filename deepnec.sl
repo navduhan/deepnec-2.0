@@ -12,8 +12,8 @@
 set -euo pipefail
 umask 077
 
-if [[ $# -ne 5 ]]; then
-  echo "Usage: $0 input.fasta Phase1|Phase2|Phase3|Phase4 pathway final output-directory" >&2
+if [[ $# -lt 5 || $# -gt 6 ]]; then
+  echo "Usage: $0 input.fasta Phase1|Phase2|Phase3|Phase4 pathway final output-directory [prot|nucl]" >&2
   exit 64
 fi
 
@@ -22,6 +22,8 @@ level=$2
 pathway=$3
 model=$4
 output_dir=$5
+sequence_type=${6:-prot}
+case "$sequence_type" in prot|nucl) ;; *) echo 'Sequence type must be prot or nucl.' >&2; exit 64;; esac
 
 case "$level" in
   Phase1|Phase2|Phase3|Phase4) ;;
@@ -85,10 +87,12 @@ export TF_CPP_MIN_LOG_LEVEL="${TF_CPP_MIN_LOG_LEVEL:-2}"
   -o deepnec_predictions.tsv \
   -l "$level" \
   -n "$pathway" \
-  -t prot
+  -t "$sequence_type"
 
+motif_fasta="$input_fasta"
+if [[ "$sequence_type" == nucl ]]; then motif_fasta="$output_dir/translated_proteins.fasta"; fi
 "$python_bin" -m deepNEC.motif_scan \
-  -i "$input_fasta" \
+  -i "$motif_fasta" \
   -o "$output_dir/motif_scan_report.tsv"
 
 prediction_file=$(find "$output_dir" -maxdepth 1 -type f -name '*predictions.tsv' -size +0c -print -quit)

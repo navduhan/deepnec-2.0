@@ -27,6 +27,8 @@ from deepNEC import __version__
 
 
 import subprocess
+from Bio import SeqIO
+from Bio.Seq import Seq
 
 def Nt2AA(fasta_file, output_dir):
     """
@@ -47,7 +49,12 @@ def Nt2AA(fasta_file, output_dir):
 
     pep_src = os.path.join(trans_out_dir, "longest_orfs.pep")
     if os.path.exists(pep_src):
-        shutil.copy(pep_src, out_pep)
+        records = list(SeqIO.parse(pep_src, "fasta"))
+        for record in records:
+            record.seq = Seq(str(record.seq).rstrip("*"))
+        if not records:
+            raise RuntimeError("TransDecoder found no open reading frames.")
+        SeqIO.write(records, out_pep, "fasta")
         return out_pep
     else:
         raise RuntimeError("TransDecoder failed to produce longest_orfs.pep.")
