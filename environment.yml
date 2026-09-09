@@ -3,17 +3,16 @@ name: deepnec2
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - python>=3.8,<3.13
-  - diamond>=2.0.0
-  - blast
+  - python>=3.9,<3.12
   - transdecoder
   - pip
   - pip:
     - numpy>=1.23.5,<2.0
-    - pandas
-    - biopython
+    - pandas>=1.4.0
+    - biopython>=1.79
     - tensorflow==2.16.2
-    - torch
-    - transformers
+    - torch>=2.0.0
+    - transformers>=4.30.0
+    - matplotlib>=3.5.0
+    - seaborn>=0.11.0
