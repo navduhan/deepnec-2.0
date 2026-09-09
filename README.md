@@ -120,7 +120,26 @@ If you encounter `zsh: command not found: deepnec`:
 | `-od`, `--output_dir` | Directory to save prediction outputs | `deepnec_results` |
 | `-o`, `--output_file` | Name of final prediction TSV file | `deepnec_predictions.tsv` |
 | `-l`, `--level` | Target prediction level (`Phase1`, `Phase2`, `Phase3`, `Phase4`) | `Phase4` |
+| `-n`, `--pathway` | Phase 4 pathway, or `all` for hierarchical routing | `all` |
 | `-t`, `--seqtype` | Query sequence type (`prot` or `nucl`) | `prot` |
+
+### SLURM execution
+
+The included GPU launcher runs the frozen final models and motif scan in one job:
+
+```bash
+sbatch deepnec.sl input.fasta Phase4 all final results
+```
+
+The default installation is `$HOME/naveen_tools/deepnec-2.0`. Override it and the Python interpreter when the cluster layout differs:
+
+```bash
+export DEEPNEC_APP_DIR=/path/to/deepnec-2.0
+export PYTHON_BIN=/path/to/deepnec-python
+sbatch deepnec.sl input.fasta Phase4 all final results
+```
+
+Set `DEEPNEC_MODULE` to a different environment module name, or to an empty value to skip module loading. The launcher accepts only the frozen `final` model set.
 
 ### Protein sequence validation
 

@@ -56,6 +56,7 @@ packages = ["deepNEC"]
 [tool.hatch.build.targets.sdist]
 include = [
     "/deepNEC",
+    "/deepnec.sl",
     "/README.md",
     "/LICENSE"
 ]
